@@ -92,6 +92,7 @@
 ```sh
 function lib()
     % ===== Get mode module =====
+    % >>> Global values ==================================
     mode = get_mode_module();
     switch mode
         case 1
@@ -142,7 +143,8 @@ end
 
 % ===== mode module 1 =========================================
 function name_module = open_module()
-    name_module = input("Simulink System : ", "s");
+    %name_module = input("Simulink System : ", "s");
+    name_module = "my_module";
 end
 
 % ===== mode module 2 =========================================
@@ -165,7 +167,7 @@ function select = op_block_of_module(name)
         switch select
             % === Add block =====================
             case 1
-                add_block();
+                add_block(name);
                 break;
             % === Delete block ===================
             case 2
@@ -189,7 +191,7 @@ function select = op_block_of_module(name)
 end
 
 % ===== Add Block ========================================
-function select_add = add_block()
+function select_add = add_block(name)
     fprintf("-----ADD BLOCK MENU-----\n");
     fprintf("1. Chose path\n");
     fprintf("2. Add New Block\n");
@@ -197,9 +199,9 @@ function select_add = add_block()
     select_add = input("Select mode:");
     switch select_add
         case 1
-            add_block_chose_path();
+            add_block_chose_path(name);
         case 2
-            add_block_new();
+            add_block_chose_path(name);
         case 3
             add_block_exit();
         otherwise
@@ -207,10 +209,32 @@ function select_add = add_block()
     end
 end
 % ===== <Add Block> Chose pahth ==========================
-function add_block_chose_path()
+function add_block_chose_path(name)
+    load_system(name);
+    arr_path_add = find_system(name)
+    [size_add_row, size_add_col] = size(arr_path_add);
+    curr_chose = sub_chose_path(size_add_row);
+    arr_path_add(curr_chose, 1);
+    path = string(arr_path_add(curr_chose, 1))
+    add_block_new("", path);
 end
+
+function current_chose = sub_chose_path(max_chose)
+    while true
+        current_input = input("Chose path : ");
+        if current_input <= max_chose
+            break;
+        end
+    end
+    current_chose = current_input;
+end
+
 % ===== <Add Block> Add New block ========================
-function add_block_new()
+function add_block_new(path_source, path_dest)
+    while true
+        block_type = input("Block Type : ", "s");
+        block_name = input("Block Name : ", "s");
+    end
 end
 % ===== <Add Block> Exit =================================
 function add_block_exit()
@@ -247,5 +271,4 @@ end
 % ===== Delete Line ======================================
 % ===== Display Block Info ===============================
 % ===== Exit =============================================
-
 ```
