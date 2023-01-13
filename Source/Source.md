@@ -6,6 +6,9 @@
 ### [1.2 Add block "Pulse Generator"](12)
 ### [1.3 Add block "Add"](13)
 
+## [2. Note](#2)
+### [2.1 Delete new line in string ](#21)
+
 #
 
 ### <a id ="find"></a>**Find path of block in simulink**
@@ -30,4 +33,10 @@
 ### <a id = "13"></a>1.3 Add block "Add".
 ```sh
     add_block("simulink/Math Operations/Add", "my_module/Add", "Position", [200 10 270 70]);
+```
+
+## <a id = "2"></a> 2. Note.
+### <a id = "21"></a> 2.1 Delete new line in string.
+```sh
+    cstr = strrep(val_block, newline, ' ') 
 ```

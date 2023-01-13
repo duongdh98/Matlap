@@ -91,8 +91,8 @@
 #
 ```sh
 function lib()
-    % ===== Get mode module =====
-    % >>> Global values ==================================
+    % ===== Get mode module =====================================
+    % >>> Global values =========================================
     mode = get_mode_module();
     switch mode
         case 1
@@ -105,25 +105,7 @@ function lib()
     end
 end 
 
-function create_module(name)
-    if isfile(name)
-        fprintf(">>> File exist. \n");
-        open_system(name);
-    else
-        fprintf(">>> File does not exist. \n");
-        new_system(name);
-        open_system(name);
-    end
-end
-
-function add_blocks_module()
-    add_block("simulink/Sources/Sine Wave", "my_module/Sine", "Position", [10 10 70 70]);
-    add_block("simulink/Sources/Pulse Generator", "my_module/Pulse", "Position", [10 90 70 160]);
-    add_block("simulink/Math Operations/Add", "my_module/Add", "Position", [200 10 270 70]);
-    %add_block("simulink/Sources/Pulse Generator", "my_module/Pulse", "Position", [185 350 215 380]);
-end
-
-% ===== Get mode module =========================================
+% ===== Get mode module ========================================
 function mode = get_mode_module()
     while true
         fprintf("-----MAIN MENU----- \n");
@@ -153,9 +135,9 @@ function name_module = create_new_module()
 end
 
 % ===== option block of module ================================
-function select = op_block_of_module(name)
+function select = op_block_of_module(name_block)
     while true
-        fprintf("Simulink System: %s \n", name);
+        fprintf("Simulink System: %s \n", name_block);
         fprintf("-----MAIN MENU-----\n");
         fprintf("1. Add Block\n");
         fprintf("2. Delete Block\n");
@@ -167,10 +149,11 @@ function select = op_block_of_module(name)
         switch select
             % === Add block =====================
             case 1
-                add_block(name);
+                add_block(name_block);
                 break;
             % === Delete block ===================
             case 2
+                delete_block(name_block);
                 break;
             % === Connect block ==================
             case 3
@@ -211,12 +194,12 @@ end
 % ===== <Add Block> Chose pahth ==========================
 function add_block_chose_path(name)
     load_system(name);
+    open_system(name);
     arr_path_add = find_system(name)
     [size_add_row, size_add_col] = size(arr_path_add);
     curr_chose = sub_chose_path(size_add_row);
-    arr_path_add(curr_chose, 1);
-    path = string(arr_path_add(curr_chose, 1))
-    add_block_new("", path);
+    path_cv = string(arr_path_add(curr_chose, 1));
+    add_block_new(path_cv);
 end
 
 function current_chose = sub_chose_path(max_chose)
@@ -230,10 +213,36 @@ function current_chose = sub_chose_path(max_chose)
 end
 
 % ===== <Add Block> Add New block ========================
-function add_block_new(path_source, path_dest)
+function add_block_new(path_bl)
+    simulink_check = ["BlockType", "Name"];
     while true
         block_type = input("Block Type : ", "s");
-        block_name = input("Block Name : ", "s");
+        load_system("simulink");
+        result_block = find_system("simulink", simulink_check(1), block_type)
+        [x, y] = size(result_block);
+        
+        if x > 0
+            block_name = input("Block Name : ", "s");
+            val_block = string(result_block(1, 1));
+            path_full = strcat(path_bl,"/", block_name);
+            path_simul = strrep(val_block, newline, ' ');
+            func_add_block(path_simul, path_full);
+            break;
+        else
+            result_block = find_system("simulink", simulink_check(2), block_type);
+            [x, y] = size(result_block);
+            if x > 0
+                block_name = input("Block Name : ", "s");
+                val_block = string(result_block(1, 1));
+                path_full = strcat(path_bl,"/", block_name);
+                path_simul = strrep(val_block, newline, ' ');
+                func_add_block(path_simul, path_full);
+                break;
+            end
+        end
+        %block_name = input("Block Name : ", "s");
+        %path_source = strcat(path_source,"/", block_type)
+        %path_dest   = strcat(path_dest, "/", block_name)
     end
 end
 % ===== <Add Block> Exit =================================
